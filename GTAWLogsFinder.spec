@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['GTAWLogsFinder.py'],
+    ['GtaWLogsFinder.py'],
     pathex=[],
     binaries=[],
     datas=[('config.json', '.')],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='GTAWLogsFinder',
+    name='GtaWLogsFinder',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

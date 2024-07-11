@@ -51,11 +51,25 @@ def find_lines_with_keyword(directory, keyword):
                 
                 # Open the file and search for the keyword
                 with open(filepath, 'r', encoding='utf-8') as file:
-                    for line in file:
-                        if keyword in line:
-                            lines_with_keyword.append((filepath, line.strip()))
+                    for line_num, line in enumerate(file, 1):
+                        # Check if keyword is approximately in the line
+                        if is_approximate_match(keyword.lower(), line.lower()):
+                            lines_with_keyword.append((filepath, line_num, line.strip()))
+
     return lines_with_keyword
 
+def is_approximate_match(keyword, line):
+    # Tokenize keyword and line
+    keyword_tokens = keyword.split()
+    line_tokens = line.split()
+
+    # Iterate over each keyword token
+    for token in keyword_tokens:
+        if not any(token in line_token for line_token in line_tokens):
+            return False
+    
+    return True
+    
 def open_file():
     global folder_path
     folder_path = filedialog.askdirectory(title="Select a folder")
@@ -67,7 +81,7 @@ def open_file():
 def open_results_window(results):
     results_window = tk.Toplevel(root)
     results_window.title("Search Results")
-    results_window.geometry("400x300")
+    results_window.geometry("600x400")
     
     results_label = ttk.Label(results_window, text="Search Results:", style="TLabel")
     results_label.pack(pady=10)
@@ -75,8 +89,8 @@ def open_results_window(results):
     results_text = tk.Text(results_window, wrap="word")
     results_text.pack(expand=True, fill="both")
     
-    for filename, line in results:
-        results_text.insert("end", f'File: {filename}\nLine: {line}\n\n')
+    for filepath, line_num, line in results:
+        results_text.insert("end", f'File: {filepath}\nLine {line_num}: {line}\n\n')
 
 def search():
     if folder_path:
@@ -118,7 +132,7 @@ main_frame.pack(expand=True, fill="both")
 root.configure(background="#f8f9fa")
 
 # Keyword Label
-keywordLabel = ttk.Label(main_frame, text="Keyword:", style="TLabel")
+keywordLabel = ttk.Label(main_frame, text="Keywords:", style="TLabel")
 keywordLabel.pack()
 
 # Keyword Entry
